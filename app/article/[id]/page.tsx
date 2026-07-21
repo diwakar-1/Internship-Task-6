@@ -37,7 +37,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
-  const analysis = article.analysis;
+  const rawAnalysis = article.analysis;
+  const analysis = Array.isArray(rawAnalysis) ? (rawAnalysis.length > 0 ? rawAnalysis[0] : undefined) : rawAnalysis;
   const source = article.source;
 
   const relatedArticles = await getRelatedArticles(article.id, analysis?.embedding, 5);
@@ -58,7 +59,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-[#F0F0F0] text-[#0D0D0F] font-poppins flex flex-col justify-between">
+    <div className="min-h-screen bg-[#F0F0F0] dark:bg-[#0B0F19] text-[#0D0D0F] dark:text-slate-100 font-poppins flex flex-col justify-between">
       <div>
         {/* Top Navbar */}
         <HomeNavbar />
@@ -73,14 +74,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <div className="lg:col-span-8 space-y-6">
               
               {/* Category · Location */}
-              <div className="text-xs font-semibold text-[#6B7280] tracking-wider uppercase flex items-center justify-between">
+              <div className="text-xs font-semibold text-[#6B7280] dark:text-[#94A3B8] tracking-wider uppercase flex items-center justify-between">
                 <span>{source?.name || "News"} · Global</span>
                 {article.canonical_url && (
                   <a
                     href={article.canonical_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#1D4ED8] hover:underline flex items-center gap-1 normal-case font-medium"
+                    className="text-[#1D4ED8] dark:text-blue-400 hover:underline flex items-center gap-1 normal-case font-medium"
                   >
                     <span>Original Source</span>
                     <ExternalLink className="w-3 h-3" />
@@ -89,14 +90,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </div>
 
               {/* Main Headline Title */}
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0D0D0F] leading-tight tracking-tight font-poppins">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0D0D0F] dark:text-slate-100 leading-tight tracking-tight font-poppins">
                 {article.title}
               </h1>
 
               {/* Author & Action Meta Row */}
-              <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-[#E5E7EB] text-xs text-[#6B7280]">
+              <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-[#E5E7EB] dark:border-[#334155] text-xs text-[#6B7280] dark:text-[#94A3B8]">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-[#0D0D0F]">Source: {source?.name || "Verified Publisher"}</span>
+                  <span className="font-semibold text-[#0D0D0F] dark:text-slate-100">Source: {source?.name || "Verified Publisher"}</span>
                   <span>|</span>
                   <span>{formattedDate}</span>
                 </div>
@@ -104,21 +105,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
               {/* Hero Image Container */}
               <div className="space-y-2">
-                <div className="aspect-[16/9] rounded-[12px] bg-[#F6F6F6] overflow-hidden border border-[#E5E7EB]">
+                <div className="aspect-[16/9] rounded-[12px] bg-[#F6F6F6] dark:bg-[#0F172A] overflow-hidden border border-[#E5E7EB] dark:border-[#334155]">
                   <img
                     src={getDistinctArticleImage(article.id, article.title, article.image_url)}
                     alt={article.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <p className="text-[11px] text-[#6B7280] font-normal leading-normal">
+                <p className="text-[11px] text-[#6B7280] dark:text-[#94A3B8] font-normal leading-normal">
                   Source: {source?.name || "Original Publication"}
                 </p>
               </div>
 
               {/* Inline Bias Distribution Box */}
-              <div className="bg-white rounded-[12px] p-4 border border-[#E5E7EB] shadow-ds-sm space-y-2">
-                <div className="flex items-center justify-between text-xs text-[#6B7280] font-semibold">
+              <div className="bg-white dark:bg-[#1E293B] rounded-[12px] p-4 border border-[#E5E7EB] dark:border-[#334155] shadow-ds-sm space-y-2">
+                <div className="flex items-center justify-between text-xs text-[#6B7280] dark:text-[#94A3B8] font-semibold">
                   <div className="flex items-center gap-1.5">
                     <span>AI-Estimated Bias Distribution</span>
                     <Info className="w-3.5 h-3.5" />
@@ -127,8 +128,30 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 <BiasMeter left={leftPct} center={centerPct} right={rightPct} size="md" showLabels={true} />
               </div>
 
+              {/* Prominent Executive AI Summary Highlight Box */}
+              {analysis?.summary && (
+                <div className="bg-gradient-to-r from-blue-50/90 dark:from-blue-950/30 via-indigo-50/70 dark:via-indigo-950/20 to-slate-50 dark:to-slate-900/40 rounded-[12px] p-5 border border-blue-100/90 dark:border-blue-900/50 shadow-ds-sm space-y-2 font-poppins">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#1D4ED8] dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+                      ✨ Executive AI Article Summary
+                    </span>
+                    <span className="text-[10px] text-blue-700 dark:text-blue-300 bg-blue-100/80 dark:bg-blue-900/40 px-2 py-0.5 rounded font-semibold">
+                      {analysis.model || "gpt-4o-mini"}
+                    </span>
+                  </div>
+                  <p className="text-sm text-[#1F2937] dark:text-[#E2E8F0] leading-relaxed font-normal whitespace-pre-line">
+                    {analysis.summary}
+                  </p>
+                  {analysis.disclaimer && (
+                    <p className="text-[11px] text-[#6B7280] dark:text-[#94A3B8] italic pt-1 border-t border-blue-100/60 dark:border-blue-900/30">
+                      {analysis.disclaimer}
+                    </p>
+                  )}
+                </div>
+              )}
+
               {/* Main Article Body Text */}
-              <div className="space-y-4 text-sm sm:text-base text-[#0D0D0F] leading-relaxed font-poppins pt-2">
+              <div className="space-y-4 text-sm sm:text-base text-[#0D0D0F] dark:text-[#E2E8F0] leading-relaxed font-poppins pt-2">
                 {rawParagraphs.map((para, index) => (
                   <p key={index}>{para}</p>
                 ))}
@@ -157,6 +180,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 summary={analysis?.summary}
                 disclaimer={analysis?.disclaimer}
                 model={analysis?.model}
+                articleId={article.id}
               />
 
               {/* Widget 3: Source Breakdown */}

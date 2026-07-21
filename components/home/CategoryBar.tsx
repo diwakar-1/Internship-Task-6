@@ -49,13 +49,13 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
   };
 
   return (
-    <div className="w-full bg-[#F0F0F0] border-b border-[#E5E7EB] py-2.5">
+    <div className="w-full bg-[#F0F0F0] dark:bg-[#0F172A] border-b border-[#E5E7EB] dark:border-[#334155] py-2.5">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 flex items-center gap-2">
         {/* Left Arrow */}
         <button
           onClick={() => scroll("left")}
           aria-label="Scroll Left"
-          className="p-1 text-[#6B7280] hover:text-[#0D0D0F] hover:bg-[#E5E7EB] rounded-full transition-colors flex-shrink-0 cursor-pointer"
+          className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC] hover:bg-[#E5E7EB] dark:hover:bg-[#1E293B] rounded-full transition-colors flex-shrink-0 cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
         </button>
@@ -73,8 +73,7 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
                 active={currentCategory === cat}
                 onClick={() => handleSelectCategory(cat)}
                 size="sm"
-                showIcon={true}
-                iconType="plus"
+                showIcon={false}
               />
             </div>
           ))}
@@ -84,7 +83,7 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
         <button
           onClick={() => scroll("right")}
           aria-label="Scroll Right"
-          className="p-1 text-[#6B7280] hover:text-[#0D0D0F] hover:bg-[#E5E7EB] rounded-full transition-colors flex-shrink-0 cursor-pointer"
+          className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC] hover:bg-[#E5E7EB] dark:hover:bg-[#1E293B] rounded-full transition-colors flex-shrink-0 cursor-pointer"
         >
           <ChevronRight className="w-4 h-4 stroke-[2.5]" />
         </button>

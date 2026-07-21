@@ -11,9 +11,9 @@ export const Logo: React.FC<LogoProps> = ({
   size = "md",
   showTagline = false,
 }) => {
-  const textColor = variant === "dark" ? "text-[#0D0D0F]" : "text-white";
-  const subtitleColor = variant === "dark" ? "text-[#6B7280]" : "text-gray-400";
-  const taglineColor = variant === "dark" ? "text-[#6B7280]" : "text-gray-300";
+  const textColor = variant === "dark" ? "text-[#0D0D0F] dark:text-[#F8FAFC]" : "text-white";
+  const subtitleColor = variant === "dark" ? "text-[#6B7280] dark:text-[#94A3B8]" : "text-gray-400";
+  const taglineColor = variant === "dark" ? "text-[#6B7280] dark:text-[#94A3B8]" : "text-gray-300";
 
   const sizeClasses = {
     sm: "text-2xl",

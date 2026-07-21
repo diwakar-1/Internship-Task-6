@@ -1,6 +1,16 @@
 import { supabaseAdmin } from "../server";
 import { Article } from "../types";
 
+function unwrapAnalysis<T>(item: T): T {
+  if (item && typeof item === "object" && "analysis" in item) {
+    const rawAnalysis = (item as Record<string, unknown>).analysis;
+    if (Array.isArray(rawAnalysis)) {
+      (item as Record<string, unknown>).analysis = rawAnalysis.length > 0 ? rawAnalysis[0] : null;
+    }
+  }
+  return item;
+}
+
 export async function getArticles(limit = 20): Promise<Article[]> {
   const { data, error } = await supabaseAdmin
     .from("articles")
@@ -17,7 +27,8 @@ export async function getArticles(limit = 20): Promise<Article[]> {
     return [];
   }
 
-  return (data as unknown as Article[]) || [];
+  const articles = (data || []).map((item) => unwrapAnalysis(item));
+  return (articles as unknown as Article[]) || [];
 }
 
 export async function getArticleById(id: string): Promise<Article | null> {
@@ -36,7 +47,8 @@ export async function getArticleById(id: string): Promise<Article | null> {
     return null;
   }
 
-  return (data as unknown as Article) || null;
+  const article = unwrapAnalysis(data);
+  return (article as unknown as Article) || null;
 }
 
 /**

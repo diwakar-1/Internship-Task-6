@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Design Tokens from UI Reference Spec */
   /* Colors - Primary */
@@ -28,6 +30,17 @@
   --radius-medium: 8px;
   --radius-large: 12px;
   --radius-full: 9999px;
+}
+
+html.dark, .dark {
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-surface: #1E293B;
+  --color-bg-primary: #0F172A;
+  --color-bg-secondary: #0F172A;
+  --color-border: #334155;
+  --color-divider: #334155;
+  color-scheme: dark;
 }
 
 body {
