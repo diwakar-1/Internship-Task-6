@@ -60,7 +60,7 @@ export const HomeFooter: React.FC = () => {
 
         {/* Bottom Copyright Line */}
         <div className="pt-6 border-t border-gray-800 text-[11px] text-gray-500 font-normal">
-          © 2026 Update Me News. All rights reserved.
+          © 2026 Update You News. All rights reserved.
         </div>
       </div>
     </footer>

@@ -75,7 +75,7 @@ export async function analyzeArticleWithAI(
     return generateFallbackAnalysis(title, rawText, sourceName);
   }
 
-  const systemPrompt = `You are a neutral, principal-level media bias and sentiment analysis AI engine for "Update Me".
+  const systemPrompt = `You are a neutral, principal-level media bias and sentiment analysis AI engine for "Update You".
 Your task is to analyze the provided article text objectively.
 
 Rules:

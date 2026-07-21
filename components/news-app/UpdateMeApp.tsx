@@ -135,7 +135,7 @@ export const UpdateMeApp: React.FC = () => {
         <div className="bg-[#0D0D0F] text-white rounded-[16px] p-6 sm:p-8 relative overflow-hidden shadow-ds-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl z-10">
             <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 border border-emerald-800 px-3 py-1 rounded-full">
-              Update Me News Platform
+              Update You News Platform
             </span>
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight font-poppins">
               Multi-Source News Analysis & Framing Transparency

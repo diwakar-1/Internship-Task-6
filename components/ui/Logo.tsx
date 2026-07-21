@@ -25,7 +25,7 @@ export const Logo: React.FC<LogoProps> = ({
     <div className="flex flex-col items-center text-center select-none">
       <div className="flex flex-col items-center leading-none tracking-tight">
         <span className={`font-black tracking-tighter ${sizeClasses[size]} ${textColor} lowercase font-poppins`}>
-          update me
+          update you
         </span>
         <span className={`font-bold text-xs uppercase tracking-[0.22em] ${subtitleColor} mt-0.5`}>
           News

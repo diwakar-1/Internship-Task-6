@@ -12,7 +12,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Update Me - Balanced News Coverage",
+  title: "Update You - Balanced News Coverage",
   description: "Official AI-powered News Platform with framing transparency and sentiment analysis.",
 };
 
