@@ -9,7 +9,6 @@ import { SidebarBiasAnalysis } from "@/components/article/SidebarBiasAnalysis";
 import { SidebarAiSummary } from "@/components/article/SidebarAiSummary";
 import { SidebarSourceBreakdown } from "@/components/article/SidebarSourceBreakdown";
 import { RelatedStories } from "@/components/article/RelatedStories";
-import { NewsletterBanner } from "@/components/article/NewsletterBanner";
 import { getArticleById, getRelatedArticles } from "@/lib/supabase/queries/articles";
 import { getDistinctArticleImage } from "@/lib/utils/image";
 import { Info, ExternalLink } from "lucide-react";
@@ -168,9 +167,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
 
           </div>
-
-          {/* Newsletter Subscription Banner */}
-          <NewsletterBanner />
 
         </main>
       </div>
