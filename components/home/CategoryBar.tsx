@@ -17,9 +17,19 @@ const CATEGORIES = [
   "Extreme Weather and Disasters",
 ];
 
-export const CategoryBar: React.FC = () => {
+interface CategoryBarProps {
+  activeCategory?: string | null;
+  onSelectCategory?: (category: string | null) => void;
+}
+
+export const CategoryBar: React.FC<CategoryBarProps> = ({
+  activeCategory: externalActiveCategory,
+  onSelectCategory,
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeCategory, setActiveCategory] = React.useState<string | null>(null);
+  const [internalCategory, setInternalCategory] = React.useState<string | null>(null);
+
+  const currentCategory = externalActiveCategory !== undefined ? externalActiveCategory : internalCategory;
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -28,12 +38,13 @@ export const CategoryBar: React.FC = () => {
     }
   };
 
-  const selectCategory = (category: string) => {
-    const selectedCategory = activeCategory === category ? null : category;
-    setActiveCategory(selectedCategory);
+  const handleSelectCategory = (category: string) => {
+    const nextCategory = currentCategory === category ? null : category;
+    setInternalCategory(nextCategory);
+    if (onSelectCategory) onSelectCategory(nextCategory);
     posthog.capture("category_filter_changed", {
-      category: selectedCategory ?? "all",
-      filter_cleared: selectedCategory === null,
+      category: nextCategory ?? "all",
+      filter_cleared: nextCategory === null,
     });
   };
 
@@ -59,8 +70,8 @@ export const CategoryBar: React.FC = () => {
             <div key={cat} className="flex-shrink-0">
               <Chip
                 label={cat}
-                active={activeCategory === cat}
-                onClick={() => selectCategory(cat)}
+                active={currentCategory === cat}
+                onClick={() => handleSelectCategory(cat)}
                 size="sm"
                 showIcon={true}
                 iconType="plus"
