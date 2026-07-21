@@ -39,8 +39,8 @@ export const BiasMeter: React.FC<BiasMeterProps> = ({
         {leftPct > 0 && (
           <div
             style={{ width: `${leftPct}%` }}
-            className="bg-[#B42318] text-white flex items-center justify-center transition-all duration-300 px-1 overflow-hidden whitespace-nowrap text-ellipsis"
-            title={`Left: ${leftPct}%`}
+            className="bg-[#B42318] text-white flex items-center justify-center transition-all duration-300 px-1 overflow-hidden whitespace-nowrap text-ellipsis cursor-help"
+            title={`Left (${leftPct}%): Progressive/Liberal framing focusing on social equity & regulation`}
           >
             {showLabels && (leftPct >= 12 ? `Left ${leftPct}%` : `${leftPct}%`)}
           </div>
@@ -50,8 +50,8 @@ export const BiasMeter: React.FC<BiasMeterProps> = ({
         {centerPct > 0 && (
           <div
             style={{ width: `${centerPct}%` }}
-            className="bg-[#E5E7EB] text-[#0D0D0F] flex items-center justify-center transition-all duration-300 px-1 overflow-hidden whitespace-nowrap text-ellipsis border-x border-white/40"
-            title={`Center: ${centerPct}%`}
+            className="bg-[#E5E7EB] text-[#0D0D0F] flex items-center justify-center transition-all duration-300 px-1 overflow-hidden whitespace-nowrap text-ellipsis border-x border-white/40 cursor-help"
+            title={`Center (${centerPct}%): Factual/Neutral non-partisan reporting`}
           >
             {showLabels && (centerPct >= 12 ? `Center ${centerPct}%` : `${centerPct}%`)}
           </div>
@@ -61,8 +61,8 @@ export const BiasMeter: React.FC<BiasMeterProps> = ({
         {rightPct > 0 && (
           <div
             style={{ width: `${rightPct}%` }}
-            className="bg-[#1D4ED8] text-white flex items-center justify-center transition-all duration-300 px-1 overflow-hidden whitespace-nowrap text-ellipsis"
-            title={`Right: ${rightPct}%`}
+            className="bg-[#1D4ED8] text-white flex items-center justify-center transition-all duration-300 px-1 overflow-hidden whitespace-nowrap text-ellipsis cursor-help"
+            title={`Right (${rightPct}%): Conservative/Traditional framing focusing on free markets & individual liberty`}
           >
             {showLabels && (rightPct >= 12 ? `Right ${rightPct}%` : `${rightPct}%`)}
           </div>
