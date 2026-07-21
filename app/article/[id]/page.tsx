@@ -11,6 +11,7 @@ import { SidebarSourceBreakdown } from "@/components/article/SidebarSourceBreakd
 import { RelatedStories } from "@/components/article/RelatedStories";
 import { NewsletterBanner } from "@/components/article/NewsletterBanner";
 import { getArticleById, getRelatedArticles } from "@/lib/supabase/queries/articles";
+import { getDistinctArticleImage } from "@/lib/utils/image";
 import { Info, ExternalLink } from "lucide-react";
 
 export const revalidate = 0; // Dynamic data fetching
@@ -106,7 +107,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <div className="space-y-2">
                 <div className="aspect-[16/9] rounded-[12px] bg-[#F6F6F6] overflow-hidden border border-[#E5E7EB]">
                   <img
-                    src={article.image_url}
+                    src={getDistinctArticleImage(article.id, article.title, article.image_url)}
                     alt={article.title}
                     className="w-full h-full object-cover"
                   />
@@ -142,7 +143,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
 
             {/* RIGHT COLUMN: Sidebar Widgets (4 cols) */}
-            <div className="lg:col-span-4 space-y-6 sticky top-20">
+            <div className="lg:col-span-4 space-y-6">
               {/* Widget 1: Bias Analysis */}
               <SidebarBiasAnalysis
                 biasLabel={analysis?.bias_label || "Center"}

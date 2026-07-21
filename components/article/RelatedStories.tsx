@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import posthog from "posthog-js";
 import { Article } from "@/lib/supabase/types";
+import { getDistinctArticleImage } from "@/lib/utils/image";
 
 interface RelatedStoriesProps {
   articles?: Article[];
@@ -28,6 +29,8 @@ export const RelatedStories: React.FC<RelatedStoriesProps> = ({ articles }) => {
               })
             : "Recent";
 
+          const imageUrl = getDistinctArticleImage(story.id, story.title, story.image_url);
+
           return (
             <Link
               key={story.id}
@@ -43,7 +46,7 @@ export const RelatedStories: React.FC<RelatedStoriesProps> = ({ articles }) => {
               {/* Thumbnail */}
               <div className="w-20 h-16 rounded-[6px] bg-[#F6F6F6] overflow-hidden flex-shrink-0">
                 <img
-                  src={story.image_url}
+                  src={imageUrl}
                   alt={story.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />

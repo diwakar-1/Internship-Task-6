@@ -4,6 +4,7 @@ import { CategoryBar } from "@/components/home/CategoryBar";
 import { HomeNewsCard } from "@/components/home/HomeNewsCard";
 import { HomeFooter } from "@/components/home/HomeFooter";
 import { getArticles } from "@/lib/supabase/queries/articles";
+import { getDistinctArticleImage } from "@/lib/utils/image";
 import { Newspaper } from "lucide-react";
 
 export const revalidate = 0; // Dynamic data fetching
@@ -43,25 +44,34 @@ export default async function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {articles.map((article) => {
-                const analysis = article.analysis;
-                const source = article.source;
+              {(() => {
+                const seenImages = new Set<string>();
+                return articles.map((article) => {
+                  const analysis = article.analysis;
+                  const source = article.source;
+                  const distinctImageUrl = getDistinctArticleImage(
+                    article.id,
+                    article.title,
+                    article.image_url,
+                    seenImages
+                  );
 
-                return (
-                  <HomeNewsCard
-                    key={article.id}
-                    id={article.id}
-                    category={source?.name || "General"}
-                    location="Global"
-                    title={article.title}
-                    imageUrl={article.image_url}
-                    leftBias={analysis ? Number(analysis.left_percentage) : 33}
-                    centerBias={analysis ? Number(analysis.center_percentage) : 34}
-                    rightBias={analysis ? Number(analysis.right_percentage) : 33}
-                    sourcesCount={1}
-                  />
-                );
-              })}
+                  return (
+                    <HomeNewsCard
+                      key={article.id}
+                      id={article.id}
+                      category={source?.name || "General"}
+                      location="Global"
+                      title={article.title}
+                      imageUrl={distinctImageUrl}
+                      leftBias={analysis ? Number(analysis.left_percentage) : 33}
+                      centerBias={analysis ? Number(analysis.center_percentage) : 34}
+                      rightBias={analysis ? Number(analysis.right_percentage) : 33}
+                      sourcesCount={1}
+                    />
+                  );
+                });
+              })()}
             </div>
           )}
 
