@@ -71,20 +71,23 @@ export const HomeNewsFeed: React.FC<HomeNewsFeedProps> = ({ initialArticles }) =
     if (activeTab === "Local") {
       // Check if source or article matches set location
       if (locLower.includes("united states") || locLower.includes("us")) {
-        const isUsSource = sourceName.includes("fox") || sourceName.includes("npr") || sourceName.includes("reuters") || sourceName.includes("guardian");
-        if (!isUsSource) return false;
+        const isUsSource = sourceName.includes("fox") || sourceName.includes("npr") || sourceName.includes("reuters") || sourceName.includes("guardian") || sourceName.includes("accuweather") || sourceName.includes("espn") || sourceName.includes("techcrunch") || sourceName.includes("fortune");
+        if (!isUsSource && initialArticles.length > 3) return false;
       } else if (locLower.includes("united kingdom") || locLower.includes("uk")) {
         const isUkSource = sourceName.includes("bbc") || sourceName.includes("guardian") || sourceName.includes("reuters");
-        if (!isUkSource) return false;
+        if (!isUkSource && initialArticles.length > 3) return false;
       }
     } else if (activeTab === "For You") {
       // Filter by user selected topics
       if (userTopics.length > 0) {
-        const matchesTopic = userTopics.some(
-          (topic) =>
-            titleLower.includes(topic.toLowerCase()) ||
-            sourceName.includes(topic.toLowerCase())
-        );
+        const matchesTopic = userTopics.some((topic) => {
+          const t = topic.toLowerCase();
+          if (t.includes("weather")) return titleLower.includes("weather") || titleLower.includes("storm") || titleLower.includes("forecast") || sourceName.includes("accuweather");
+          if (t.includes("sport") || t.includes("ipl") || t.includes("cup")) return titleLower.includes("sport") || titleLower.includes("match") || titleLower.includes("game") || sourceName.includes("espn");
+          if (t.includes("tech")) return titleLower.includes("tech") || titleLower.includes("ai") || sourceName.includes("techcrunch");
+          if (t.includes("business")) return titleLower.includes("market") || titleLower.includes("bank") || titleLower.includes("trade") || sourceName.includes("fortune");
+          return titleLower.includes(t) || sourceName.includes(t);
+        });
         if (!matchesTopic && initialArticles.length > 3) return false;
       }
     } else if (activeTab === "Blindspot") {
@@ -98,11 +101,45 @@ export const HomeNewsFeed: React.FC<HomeNewsFeedProps> = ({ initialArticles }) =
     // 2. Category Chips Bar Filtering
     if (activeCategory) {
       const catLower = activeCategory.toLowerCase();
-      const matchesCat =
-        titleLower.includes(catLower) ||
-        sourceName.includes(catLower) ||
-        (article.raw_text && article.raw_text.toLowerCase().includes(catLower));
-      if (!matchesCat) return false;
+      let matchesCat = false;
+
+      if (catLower.includes("weather")) {
+        matchesCat =
+          titleLower.includes("weather") ||
+          titleLower.includes("storm") ||
+          titleLower.includes("rain") ||
+          titleLower.includes("forecast") ||
+          titleLower.includes("climate") ||
+          sourceName.includes("accuweather");
+      } else if (catLower.includes("sport") || catLower.includes("cup") || catLower.includes("ipl") || catLower.includes("soccer")) {
+        matchesCat =
+          titleLower.includes("sport") ||
+          titleLower.includes("match") ||
+          titleLower.includes("game") ||
+          titleLower.includes("team") ||
+          sourceName.includes("espn");
+      } else if (catLower.includes("technology") || catLower.includes("tech") || catLower.includes("ai")) {
+        matchesCat =
+          titleLower.includes("tech") ||
+          titleLower.includes("ai") ||
+          titleLower.includes("data") ||
+          titleLower.includes("software") ||
+          sourceName.includes("techcrunch");
+      } else if (catLower.includes("business") || catLower.includes("market")) {
+        matchesCat =
+          titleLower.includes("market") ||
+          titleLower.includes("bank") ||
+          titleLower.includes("trade") ||
+          titleLower.includes("economy") ||
+          sourceName.includes("fortune");
+      } else {
+        matchesCat =
+          titleLower.includes(catLower) ||
+          sourceName.includes(catLower) ||
+          (article.raw_text ? article.raw_text.toLowerCase().includes(catLower) : false);
+      }
+
+      if (!matchesCat && initialArticles.length > 3) return false;
     }
 
     return true;

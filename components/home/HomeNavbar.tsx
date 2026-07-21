@@ -32,6 +32,7 @@ const EDITIONS = [
 ];
 
 const TOPICS = [
+  { id: "Weather", label: "🌤️ Weather & Climate" },
   { id: "Politics", label: "🏛️ Politics" },
   { id: "Technology", label: "💻 Technology" },
   { id: "Business & Markets", label: "📈 Business & Markets" },

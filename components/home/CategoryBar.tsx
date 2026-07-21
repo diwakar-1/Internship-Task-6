@@ -6,14 +6,14 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Chip } from "../ui/Chip";
 
 const CATEGORIES = [
+  "Weather & Climate",
   "World Cup",
   "IPL",
-  "Social Media",
   "Business & Markets",
   "Health & Medicine",
-  "Soccer",
   "Artificial Intelligence",
-  "Arsenal FC",
+  "Politics",
+  "Technology",
   "Extreme Weather and Disasters",
 ];
 
