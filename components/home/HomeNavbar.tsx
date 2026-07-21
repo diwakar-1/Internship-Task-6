@@ -113,6 +113,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
   onLocationChange,
   onPreferencesChange,
 }) => {
+  const [mounted, setMounted] = useState<boolean>(false);
   const [themeMode, setThemeMode] = useState<"Light" | "Dark" | "Auto">("Light");
   const [activeTabState, setActiveTabState] = useState<string>("Home");
   const [selectedLocation, setSelectedLocation] = useState<string>("United States");
@@ -126,8 +127,9 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
 
   const currentTab = externalTab || activeTabState;
 
-  // Load stored settings from localStorage on mount
+  // Prevent Hydration Mismatches by running localStorage/Date reads client-side only
   useEffect(() => {
+    setMounted(true);
     const storedLoc = localStorage.getItem("user_news_location");
     if (storedLoc) setSelectedLocation(storedLoc);
 
@@ -186,12 +188,14 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
     }
   };
 
-  const formattedTodayDate = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedTodayDate = mounted
+    ? new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "Monday, June 1, 2026";
 
   return (
     <header className="w-full bg-[#F0F0F0] text-[#0D0D0F] font-poppins border-b border-[#E5E7EB] relative z-30">
@@ -245,7 +249,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
               title="Click to change location"
             >
               <MapPin className="w-3 h-3 text-[#1D4ED8]" />
-              <span>{selectedLocation}</span>
+              <span>{mounted ? selectedLocation : "United States"}</span>
             </button>
 
             <span className="text-gray-300">|</span>
@@ -302,8 +306,8 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
             </Link>
           </div>
 
-          {/* Center Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
+          {/* Center Navigation Links (Using div role="button" to prevent nested button HTML hydration errors) */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold select-none">
             <Link
               href="/"
               onClick={() => selectTab("Home")}
@@ -317,7 +321,9 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
             </Link>
 
             {/* For You Tab */}
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => selectTab("For You")}
               className={`py-1 border-b-2 transition-all flex items-center gap-1.5 cursor-pointer ${
                 currentTab === "For You"
@@ -327,8 +333,9 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
             >
               <span>For You</span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#B42318] inline-block" />
-              <button
-                type="button"
+              <span
+                role="button"
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowPreferencesModal(true);
@@ -337,11 +344,13 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
                 className="p-0.5 hover:text-[#0D0D0F] transition-colors cursor-pointer"
               >
                 <SlidersHorizontal className="w-3.5 h-3.5 text-[#6B7280]" />
-              </button>
-            </button>
+              </span>
+            </div>
 
             {/* Local Tab */}
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => selectTab("Local")}
               className={`py-1 border-b-2 transition-all cursor-pointer flex items-center gap-1 ${
                 currentTab === "Local"
@@ -351,12 +360,14 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
             >
               <span>Local</span>
               <span className="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded font-normal border border-emerald-200">
-                {selectedLocation.split(" ")[0]}
+                {mounted ? selectedLocation.split(" ")[0] : "United"}
               </span>
-            </button>
+            </div>
 
             {/* Blindspot Tab */}
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => selectTab("Blindspot")}
               className={`py-1 border-b-2 transition-all cursor-pointer ${
                 currentTab === "Blindspot"
@@ -365,7 +376,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
               }`}
             >
               Blindspot
-            </button>
+            </div>
           </nav>
 
           {/* Right: Clerk Action Buttons / User Menu */}

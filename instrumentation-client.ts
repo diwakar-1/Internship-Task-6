@@ -11,6 +11,7 @@ posthog.init(token, {
   api_host: host,
   person_profiles: "identified_only",
   defaults: "2026-01-30",
+  autocapture: false,
   capture_exceptions: true,
   debug: process.env.NODE_ENV === "development",
 });
