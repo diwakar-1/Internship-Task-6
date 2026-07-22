@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import posthog from "posthog-js";
-import { Menu, Globe, ChevronDown, MapPin, X, Check, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Search, Menu, X, MapPin, SlidersHorizontal, User } from "lucide-react";
 import { useUser, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Logo } from "../ui/Logo";
 import { isDummyClerkKey } from "@/lib/clerk/utils";
@@ -15,17 +14,21 @@ interface HomeNavbarProps {
   onPreferencesChange?: (preferences: string[]) => void;
 }
 
+const NAV_ITEMS = [
+  { id: "Home", label: "HOME" },
+  { id: "World", label: "WORLD" },
+  { id: "Business", label: "BUSINESS" },
+  { id: "Travel", label: "TRAVEL" },
+  { id: "Tech", label: "TECH" },
+  { id: "For You", label: "FOR YOU" },
+  { id: "Local", label: "LOCAL" },
+  { id: "Blindspot", label: "BLINDSPOT" },
+];
+
 const LOCATIONS = [
   { id: "in", name: "India", city: "New Delhi" },
   { id: "us", name: "United States", city: "Washington, D.C." },
   { id: "au", name: "Australia", city: "Canberra" },
-];
-
-const EDITIONS = [
-  "International Edition",
-  "United States Edition",
-  "United Kingdom Edition",
-  "Asia-Pacific Edition",
 ];
 
 const TOPICS = [
@@ -38,70 +41,53 @@ const TOPICS = [
   { id: "General", label: "Global News" },
 ];
 
-function AuthButtons() {
+function EditorialAuthControls() {
   const isDummy = isDummyClerkKey();
 
   if (isDummy) {
     return (
-      <>
-        <Link href="/sign-up">
-          <button className="bg-[#0D0D0F] text-white text-xs px-5 py-2 rounded-[6px] font-semibold hover:bg-[#1F2937] transition-all cursor-pointer">
-            Subscribe
-          </button>
-        </Link>
+      <div className="flex items-center gap-2">
         <Link href="/sign-in">
-          <button className="bg-[#E5E7EB]/80 text-[#0D0D0F] text-xs px-5 py-2 rounded-[6px] font-semibold hover:bg-[#D1D5DB] transition-all cursor-pointer">
-            Login
+          <button className="font-mono text-xs uppercase font-bold tracking-wider px-4 py-2 hover:bg-[#111111] hover:text-white transition-colors cursor-pointer border-l border-[#111111] h-full flex items-center">
+            SIGN IN
           </button>
         </Link>
-      </>
+      </div>
     );
   }
 
-  return <ClerkAuthControls />;
+  return <ClerkControls />;
 }
 
-function ClerkAuthControls() {
-  const { isSignedIn, isLoaded, user } = useUser();
-
-  useEffect(() => {
-    if (isLoaded && isSignedIn && user) {
-      posthog.identify(user.id, {
-        email: user.primaryEmailAddress?.emailAddress,
-        name: user.fullName,
-      });
-    }
-  }, [isLoaded, isSignedIn, user]);
+function ClerkControls() {
+  const { isSignedIn, isLoaded } = useUser();
 
   if (!isLoaded) {
-    return <div className="h-8 w-24 bg-[#E5E7EB] rounded-md animate-pulse" />;
+    return <div className="h-6 w-16 bg-[#DCDAD4] animate-pulse rounded" />;
   }
 
   if (isSignedIn) {
     return (
-      <UserButton
-        appearance={{
-          elements: {
-            avatarBox: "w-8 h-8 rounded-full border border-[#E5E7EB]",
-          },
-        }}
-      />
+      <div className="px-4 py-2 flex items-center border-l border-[#111111] h-full">
+        <UserButton
+          appearance={{
+            elements: {
+              avatarBox: "w-7 h-7 rounded-full border border-[#111111]",
+            },
+          }}
+        />
+      </div>
     );
   }
 
   return (
-    <>
-      <SignUpButton mode="redirect">
-        <button className="bg-[#0D0D0F] text-white text-xs px-5 py-2 rounded-[6px] font-semibold hover:bg-[#1F2937] transition-all cursor-pointer">
-          Subscribe
-        </button>
-      </SignUpButton>
+    <div className="flex items-center h-full">
       <SignInButton mode="redirect">
-        <button className="bg-[#E5E7EB]/80 text-[#0D0D0F] text-xs px-5 py-2 rounded-[6px] font-semibold hover:bg-[#D1D5DB] transition-all cursor-pointer">
-          Login
+        <button className="font-mono text-xs uppercase font-bold tracking-wider px-4 py-2 hover:bg-[#111111] hover:text-white transition-colors cursor-pointer border-l border-[#111111] h-full flex items-center">
+          SIGN IN
         </button>
       </SignInButton>
-    </>
+    </div>
   );
 }
 
@@ -112,69 +98,35 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
   onPreferencesChange,
 }) => {
   const [mounted, setMounted] = useState<boolean>(false);
-  const [themeMode, setThemeMode] = useState<"Light" | "Dark" | "Auto">("Light");
   const [activeTabState, setActiveTabState] = useState<string>("Home");
-  const [selectedLocation, setSelectedLocation] = useState<string>(() => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
+  const [showPreferencesModal, setShowPreferencesModal] = useState<boolean>(false);
+  const [selectedLocation, setSelectedLocation] = useState<string>("United States");
+  const [userPreferences, setUserPreferences] = useState<string[]>(["Technology", "Politics"]);
+
+  useEffect(() => {
+    setMounted(true);
     if (typeof window !== "undefined") {
-      return localStorage.getItem("user_news_location") || "United States";
-    }
-    return "United States";
-  });
-  const [selectedEdition, setSelectedEdition] = useState<string>("International Edition");
-  const [userPreferences, setUserPreferences] = useState<string[]>(() => {
-    if (typeof window !== "undefined") {
+      const storedLoc = localStorage.getItem("user_news_location");
+      if (storedLoc) setSelectedLocation(storedLoc);
+
       const storedPref = localStorage.getItem("user_news_topics");
       if (storedPref) {
         try {
-          return JSON.parse(storedPref);
+          setUserPreferences(JSON.parse(storedPref));
         } catch {
           // ignore parse error
         }
       }
     }
-    return ["Technology", "Politics"];
-  });
-
-  // Modal States
-  const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
-  const [showEditionDropdown, setShowEditionDropdown] = useState<boolean>(false);
-  const [showPreferencesModal, setShowPreferencesModal] = useState<boolean>(false);
+  }, []);
 
   const currentTab = externalTab || activeTabState;
-
-  const handleThemeChange = (mode: "Light" | "Dark" | "Auto") => {
-    setThemeMode(mode);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("user_theme_mode", mode);
-      if (mode === "Dark") {
-        document.documentElement.classList.add("dark");
-      } else if (mode === "Light") {
-        document.documentElement.classList.remove("dark");
-      } else if (mode === "Auto") {
-        const isSystemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (isSystemDark) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      }
-    }
-  };
-
-  // Prevent Hydration Mismatches by running localStorage/Date reads client-side only
-  useEffect(() => {
-    setTimeout(() => {
-      setMounted(true);
-      const storedTheme = (localStorage.getItem("user_theme_mode") as "Light" | "Dark" | "Auto") || "Light";
-      handleThemeChange(storedTheme);
-    }, 0);
-  }, []);
 
   const selectTab = (tab: string) => {
     setActiveTabState(tab);
     if (onTabChange) onTabChange(tab);
-    posthog.capture("navigation_tab_selected", { tab });
-
     if (tab === "Local") {
       setShowLocationModal(true);
     } else if (tab === "For You" && userPreferences.length === 0) {
@@ -184,10 +136,11 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
 
   const handleSetLocation = (locName: string) => {
     setSelectedLocation(locName);
-    localStorage.setItem("user_news_location", locName);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("user_news_location", locName);
+    }
     setShowLocationModal(false);
     if (onLocationChange) onLocationChange(locName);
-    posthog.capture("user_location_changed", { location: locName });
   };
 
   const handleTogglePreference = (topicId: string) => {
@@ -198,312 +151,207 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
       updated = [...userPreferences, topicId];
     }
     setUserPreferences(updated);
-    localStorage.setItem("user_news_topics", JSON.stringify(updated));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("user_news_topics", JSON.stringify(updated));
+    }
     if (onPreferencesChange) onPreferencesChange(updated);
   };
 
-  const formattedTodayDate = mounted
-    ? new Date().toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : "Monday, June 1, 2026";
-
   return (
-    <header className="w-full bg-[#F0F0F0] dark:bg-[#0F172A] text-[#0D0D0F] dark:text-[#F8FAFC] font-poppins border-b border-[#E5E7EB] dark:border-[#334155] relative z-30">
-      {/* 1. Top Utility Thin Bar */}
-      <div className="bg-[#E5E7EB]/70 dark:bg-[#1E293B]/70 border-b border-[#D1D5DB]/60 dark:border-[#334155] text-[11px] text-[#6B7280] dark:text-[#94A3B8]">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-8 flex items-center justify-between">
-          {/* Left: Theme switcher */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 select-none">
-              <span className="text-[#6B7280] dark:text-[#94A3B8]">Theme:</span>
-              <button
-                onClick={() => handleThemeChange("Light")}
-                className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
-                  themeMode === "Light" ? "font-bold text-[#0D0D0F] bg-white shadow-xs" : "hover:text-[#0D0D0F]"
-                }`}
-              >
-                Light
-              </button>
-              <button
-                onClick={() => handleThemeChange("Dark")}
-                className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
-                  themeMode === "Dark" ? "font-bold text-[#0D0D0F] bg-white shadow-xs" : "hover:text-[#0D0D0F]"
-                }`}
-              >
-                Dark
-              </button>
-              <button
-                onClick={() => handleThemeChange("Auto")}
-                className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
-                  themeMode === "Auto" ? "font-bold text-[#0D0D0F] bg-white shadow-xs" : "hover:text-[#0D0D0F]"
-                }`}
-              >
-                Auto
-              </button>
-            </div>
-          </div>
-
-          {/* Right: Date, Location, Edition */}
-          <div className="flex items-center gap-4 hidden sm:flex">
-            <span>{formattedTodayDate}</span>
-            <span className="text-gray-300">|</span>
-
-            {/* Working Set Location Button */}
-            <button
-              onClick={() => setShowLocationModal(true)}
-              className="hover:text-[#0D0D0F] transition-colors flex items-center gap-1 cursor-pointer font-medium text-[#1D4ED8]"
-              title="Click to change location"
-            >
-              <MapPin className="w-3 h-3 text-[#1D4ED8]" />
-              <span>{mounted ? selectedLocation : "United States"}</span>
-            </button>
-
-            <span className="text-gray-300">|</span>
-
-            {/* Edition Dropdown Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setShowEditionDropdown(!showEditionDropdown)}
-                className="hover:text-[#0D0D0F] transition-colors flex items-center gap-1 cursor-pointer font-medium"
-              >
-                <Globe className="w-3 h-3 text-[#6B7280]" />
-                <span>{selectedEdition}</span>
-                <ChevronDown className="w-3 h-3 text-[#6B7280]" />
-              </button>
-
-              {showEditionDropdown && (
-                <div className="absolute right-0 top-6 w-48 bg-white border border-[#E5E7EB] rounded-[8px] shadow-lg py-1 z-40 text-xs text-[#0D0D0F]">
-                  {EDITIONS.map((edition) => (
-                    <button
-                      key={edition}
-                      onClick={() => {
-                        setSelectedEdition(edition);
-                        setShowEditionDropdown(false);
-                      }}
-                      className="w-full text-left px-3 py-1.5 hover:bg-[#F6F6F6] flex items-center justify-between cursor-pointer"
-                    >
-                      <span>{edition}</span>
-                      {selectedEdition === edition && <Check className="w-3 h-3 text-emerald-600" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Main Navigation Bar */}
-      <div className="bg-[#F0F0F0] dark:bg-[#0F172A] border-b border-[#E5E7EB] dark:border-[#334155]">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+    <header className="w-full bg-[#EBEAE5] text-[#111111] font-mono border-b border-[#111111] sticky top-0 z-40 shadow-xs">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        {/* Main Grid Header */}
+        <div className="flex items-stretch border-x border-[#111111] border-b border-[#111111] h-14 bg-[#EBEAE5]">
           
-          {/* Left: Menu & Logo */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            <button
-              aria-label="Open Navigation Menu"
-              className="p-2 text-[#0D0D0F] dark:text-[#F8FAFC] hover:bg-[#E5E7EB] dark:hover:bg-[#1E293B] rounded-md transition-colors cursor-pointer"
-            >
-              <Menu className="w-5 h-5 stroke-[2]" />
-            </button>
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden px-4 flex items-center border-r border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white transition-colors"
+            aria-label="Toggle Navigation Menu"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
 
-            {/* Brand Logo */}
-            <Link href="/">
-              <Logo size="sm" showTagline={false} />
-            </Link>
-          </div>
+          {/* Left Cell: Brand Logo */}
+          <Link href="/" className="px-4 flex items-center border-r border-[#111111] hover:bg-white/50 transition-colors">
+            <Logo size="sm" showTagline={false} />
+          </Link>
 
-          {/* Center Navigation Links (Using div role="button" to prevent nested button HTML hydration errors) */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold select-none">
-            <Link
-              href="/"
-              onClick={() => selectTab("Home")}
-              className={`py-1 border-b-2 transition-all cursor-pointer ${
-                currentTab === "Home"
-                  ? "border-[#0D0D0F] dark:border-[#F8FAFC] text-[#0D0D0F] dark:text-[#F8FAFC]"
-                  : "border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC]"
-              }`}
-            >
-              Home
-            </Link>
-
-            {/* For You Tab */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => selectTab("For You")}
-              className={`py-1 border-b-2 transition-all flex items-center gap-1.5 cursor-pointer ${
-                currentTab === "For You"
-                  ? "border-[#0D0D0F] dark:border-[#F8FAFC] text-[#0D0D0F] dark:text-[#F8FAFC]"
-                  : "border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC]"
-              }`}
-            >
-              <span>For You</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B42318] inline-block" />
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowPreferencesModal(true);
-                }}
-                title="Customize Topic Preferences"
-                className="p-0.5 hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC] transition-colors cursor-pointer"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5 text-[#6B7280] dark:text-[#94A3B8]" />
-              </span>
-            </div>
-
-            {/* Local Tab */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => selectTab("Local")}
-              className={`py-1 border-b-2 transition-all cursor-pointer flex items-center gap-1 ${
-                currentTab === "Local"
-                  ? "border-[#0D0D0F] dark:border-[#F8FAFC] text-[#0D0D0F] dark:text-[#F8FAFC]"
-                  : "border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC]"
-              }`}
-            >
-              <span>Local</span>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.2 rounded font-normal border border-emerald-200 dark:border-emerald-800">
-                {mounted ? selectedLocation.split(" ")[0] : "United"}
-              </span>
-            </div>
-
-            {/* Blindspot Tab */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => selectTab("Blindspot")}
-              className={`py-1 border-b-2 transition-all cursor-pointer ${
-                currentTab === "Blindspot"
-                  ? "border-[#0D0D0F] dark:border-[#F8FAFC] text-[#0D0D0F] dark:text-[#F8FAFC]"
-                  : "border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC]"
-              }`}
-            >
-              Blindspot
-            </div>
+          {/* Desktop Tab Grid Cells */}
+          <nav className="hidden md:flex items-stretch flex-1 overflow-x-auto select-none">
+            {NAV_ITEMS.map((item) => {
+              const isActive = currentTab.toLowerCase() === item.id.toLowerCase();
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => selectTab(item.id)}
+                  className={`px-4 sm:px-5 flex items-center justify-center font-mono text-xs font-bold tracking-wider uppercase border-r border-[#111111] transition-all cursor-pointer relative ${
+                    isActive
+                      ? "bg-[#111111] text-[#EBEAE5]"
+                      : "text-[#111111] hover:bg-[#DCDAD4]"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  {isActive && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[5px] border-b-[#EBEAE5]" />
+                  )}
+                </button>
+              );
+            })}
           </nav>
 
-          {/* Right: Clerk Action Buttons / User Menu */}
-          <div className="flex items-center gap-3">
-            <AuthButtons />
-          </div>
+          {/* Right Action Cells: Search & Auth */}
+          <div className="flex items-stretch ml-auto">
+            {/* Location indicator button */}
+            <button
+              onClick={() => setShowLocationModal(true)}
+              className="hidden lg:flex items-center gap-1.5 px-3 font-mono text-[11px] uppercase font-bold border-l border-[#111111] hover:bg-[#DCDAD4] transition-colors cursor-pointer text-[#111111]"
+              title="Change Location"
+            >
+              <MapPin className="w-3.5 h-3.5 text-[#111111]" />
+              <span>{mounted ? selectedLocation.split(" ")[0] : "United"}</span>
+            </button>
 
+            {/* Topic preference customize button */}
+            <button
+              onClick={() => setShowPreferencesModal(true)}
+              className="hidden lg:flex items-center gap-1 px-3 font-mono text-[11px] uppercase font-bold border-l border-[#111111] hover:bg-[#DCDAD4] transition-colors cursor-pointer text-[#111111]"
+              title="Customize Topics"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#111111]" />
+            </button>
+
+            {/* Search Icon Cell */}
+            <button
+              onClick={() => alert("Search functionality active: Filter stories by keywords in top section.")}
+              className="px-4 flex items-center border-l border-[#111111] hover:bg-[#111111] hover:text-white transition-colors cursor-pointer"
+              aria-label="Search"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+
+            {/* Sign In Cell */}
+            <EditorialAuthControls />
+          </div>
         </div>
       </div>
 
-      {/* 3. SET LOCATION MODAL */}
+      {/* Mobile Drawer Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-[#EBEAE5] border-b border-[#111111] px-4 py-4 space-y-3 font-mono">
+          <div className="grid grid-cols-2 gap-2">
+            {NAV_ITEMS.map((item) => {
+              const isActive = currentTab.toLowerCase() === item.id.toLowerCase();
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    selectTab(item.id);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`p-2.5 text-left border border-[#111111] text-xs font-bold uppercase transition-colors ${
+                    isActive ? "bg-[#111111] text-white" : "bg-white/50 text-[#111111] hover:bg-[#111111] hover:text-white"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-2 border-t border-[#111111] flex flex-col gap-2">
+            <button
+              onClick={() => {
+                setShowLocationModal(true);
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center justify-between p-2 border border-[#111111] text-xs font-bold uppercase bg-white/50"
+            >
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-4 h-4" />
+                <span>Location: {selectedLocation}</span>
+              </span>
+              <span>CHANGE ↗</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Location Selection Modal */}
       {showLocationModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 font-poppins">
-          <div className="bg-white dark:bg-[#1E293B] rounded-[16px] max-w-md w-full p-6 shadow-2xl space-y-5 relative border border-[#E5E7EB] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#334155] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-mono">
+          <div className="bg-[#EBEAE5] border-2 border-[#111111] rounded-none max-w-md w-full p-6 shadow-2xl space-y-5 relative">
+            <div className="flex items-center justify-between border-b border-[#111111] pb-3">
               <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-[#1D4ED8]" />
-                <h3 className="text-base font-bold text-[#0D0D0F] dark:text-[#F8FAFC]">Set Your Location</h3>
+                <MapPin className="w-5 h-5 text-[#111111]" />
+                <h3 className="text-base font-extrabold uppercase font-syne text-[#111111]">SELECT LOCATION</h3>
               </div>
               <button
                 onClick={() => setShowLocationModal(false)}
-                className="p-1 rounded-full hover:bg-[#F6F6F6] dark:hover:bg-[#334155] text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC] transition-colors cursor-pointer"
+                className="p-1 hover:bg-[#111111] hover:text-white transition-colors border border-[#111111]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-[#6B7280] dark:text-[#94A3B8] leading-relaxed">
-              Select your location to personalize local coverage and filter news articles relevant to your area.
-            </p>
-
-            <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+            <div className="space-y-2">
               {LOCATIONS.map((loc) => (
                 <button
                   key={loc.id}
                   onClick={() => handleSetLocation(loc.name)}
-                  className={`w-full p-3 rounded-[10px] border text-left flex items-center justify-between transition-all cursor-pointer ${
+                  className={`w-full p-3 border text-left flex items-center justify-between transition-all cursor-pointer uppercase ${
                     selectedLocation === loc.name
-                      ? "border-[#1D4ED8] dark:border-blue-600 bg-blue-50/70 dark:bg-blue-950/20 text-[#1D4ED8] dark:text-blue-400"
-                      : "border-[#E5E7EB] dark:border-[#334155] hover:bg-[#F6F6F6] dark:hover:bg-[#334155]/50 text-[#0D0D0F] dark:text-[#F8FAFC]"
+                      ? "border-[#111111] bg-[#111111] text-white font-bold"
+                      : "border-[#111111] bg-white/60 hover:bg-[#111111] hover:text-white text-[#111111]"
                   }`}
                 >
                   <div>
                     <span className="font-bold text-xs block">{loc.name}</span>
-                    <span className="text-[11px] text-[#6B7280] dark:text-[#94A3B8]">{loc.city}</span>
+                    <span className="text-[10px] opacity-80">{loc.city}</span>
                   </div>
-                  {selectedLocation === loc.name && <Check className="w-4 h-4 text-[#1D4ED8] dark:text-blue-400" />}
+                  {selectedLocation === loc.name && <span>✦ SELECTED</span>}
                 </button>
               ))}
-            </div>
-
-            <div className="pt-2 flex justify-end border-t border-[#E5E7EB] dark:border-[#334155]">
-              <button
-                onClick={() => setShowLocationModal(false)}
-                className="bg-[#0D0D0F] dark:bg-blue-600 text-white text-xs px-5 py-2 rounded-[6px] font-semibold hover:bg-[#1F2937] dark:hover:bg-blue-700 transition-all cursor-pointer"
-              >
-                Done
-              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 4. TOPIC PREFERENCES MODAL (For You customization) */}
+      {/* Topic Preferences Modal */}
       {showPreferencesModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 font-poppins">
-          <div className="bg-white dark:bg-[#1E293B] rounded-[16px] max-w-md w-full p-6 shadow-2xl space-y-5 relative border border-[#E5E7EB] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#334155] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-mono">
+          <div className="bg-[#EBEAE5] border-2 border-[#111111] max-w-md w-full p-6 shadow-2xl space-y-5 relative">
+            <div className="flex items-center justify-between border-b border-[#111111] pb-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                <h3 className="text-base font-bold text-[#0D0D0F] dark:text-[#F8FAFC]">Customize &ldquo;For You&rdquo; Feed</h3>
+                <SlidersHorizontal className="w-5 h-5 text-[#111111]" />
+                <h3 className="text-base font-extrabold uppercase font-syne text-[#111111]">CUSTOMIZE TOPICS</h3>
               </div>
               <button
                 onClick={() => setShowPreferencesModal(false)}
-                className="p-1 rounded-full hover:bg-[#F6F6F6] dark:hover:bg-[#334155] text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC] transition-colors cursor-pointer"
+                className="p-1 hover:bg-[#111111] hover:text-white transition-colors border border-[#111111]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-[#6B7280] dark:text-[#94A3B8] leading-relaxed">
-              Choose topics you want to follow. Your personalized &ldquo;For You&rdquo; feed will automatically prioritize news matching these interests.
-            </p>
-
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto">
               {TOPICS.map((topic) => {
                 const isSelected = userPreferences.includes(topic.id);
                 return (
                   <button
                     key={topic.id}
                     onClick={() => handleTogglePreference(topic.id)}
-                    className={`p-3 rounded-[10px] border text-left flex items-center justify-between transition-all cursor-pointer ${
+                    className={`p-3 border text-left flex items-center justify-between transition-all cursor-pointer uppercase ${
                       isSelected
-                        ? "border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/20 text-purple-950 dark:text-purple-300 font-bold"
-                        : "border-[#E5E7EB] dark:border-[#334155] hover:bg-[#F6F6F6] dark:hover:bg-[#334155]/50 text-[#0D0D0F] dark:text-[#F8FAFC]"
+                        ? "border-[#111111] bg-[#111111] text-white font-bold"
+                        : "border-[#111111] bg-white/60 hover:bg-[#111111] hover:text-white text-[#111111]"
                     }`}
                   >
                     <span className="text-xs">{topic.label}</span>
-                    {isSelected ? (
-                      <span className="text-xs text-purple-700 dark:text-purple-300 bg-purple-200 dark:bg-purple-900/50 px-2 py-0.5 rounded-full font-semibold">
-                        Selected
-                      </span>
-                    ) : (
-                      <span className="text-xs text-[#6B7280] dark:text-[#94A3B8]">+ Add</span>
-                    )}
+                    <span className="text-[10px]">{isSelected ? "✦ ACTIVE" : "+ ADD"}</span>
                   </button>
                 );
               })}
-            </div>
-
-            <div className="pt-2 flex justify-end border-t border-[#E5E7EB] dark:border-[#334155]">
-              <button
-                onClick={() => setShowPreferencesModal(false)}
-                className="bg-[#0D0D0F] dark:bg-blue-600 text-white text-xs px-5 py-2 rounded-[6px] font-semibold hover:bg-[#1F2937] dark:hover:bg-blue-700 transition-all cursor-pointer"
-              >
-                Save Preferences
-              </button>
             </div>
           </div>
         </div>

@@ -46,10 +46,16 @@ const REJECT_URL_PATTERNS = [
 // Source-specific category & non-article patterns (AGENTS.md Section 11)
 const SOURCE_REJECT_PATTERNS: Record<string, RegExp[]> = {
   Reuters: [/\/world\/[a-z-]+$/i, /\/business\/[a-z-]+$/i, /\/technology\/[a-z-]+$/i, /\/markets\/?$/i],
-  "BBC News": [/\/sport\b/i, /\/weather\b/i, /\/iplayer\b/i, /\/sounds\b/i, /\/live\//i],
+  "BBC News": [/\/iplayer\b/i, /\/sounds\b/i, /\/live\//i],
+  "BBC Sport": [/\/iplayer\b/i, /\/sounds\b/i, /\/live\//i],
   "NPR News": [/\/sections\//i, /\/series\//i, /\/programs\//i, /\/music\//i],
   "Fox News": [/\/shows\//i, /\/games\//i, /\/voter-analysis\//i, /\/person\//i],
   "The Guardian": [/\/thefilter-us\/?$/i, /\/us\/[a-z-]+\/?$/i, /\/profile\//i],
+  ESPN: [/\/watch\//i, /\/fantasy\//i, /\/standings\//i, /\/schedule\//i],
+  AccuWeather: [/\/weather-radar\//i, /\/maps\//i, /\/video\//i],
+  CNBC: [/\/watchlist\//i, /\/investingclub\//i, /\/pro\//i],
+  Fortune: [/\/ranking\//i, /\/conferences\//i, /\/recommends\//i],
+  TechCrunch: [/\/events\//i, /\/startup-battleground\//i],
 };
 
 /**

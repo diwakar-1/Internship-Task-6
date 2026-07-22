@@ -3,14 +3,16 @@ import { Logo } from "../ui/Logo";
 
 export const HomeFooter: React.FC = () => {
   return (
-    <footer className="w-full bg-[#0D0D0F] text-white font-poppins pt-12 pb-8 border-t border-gray-800">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-center text-center space-y-6">
-        {/* Centered Brand Logo & Tagline */}
-        <Logo variant="light" size="md" showTagline={true} />
+    <footer className="w-full bg-[#EBEAE5] text-[#111111] font-mono pt-10 pb-8 border-t-2 border-[#111111] mt-12">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-center text-center space-y-4">
+        <Logo size="md" showTagline={true} />
 
-        {/* Bottom Copyright Line */}
-        <div className="pt-4 text-[11px] text-gray-500 font-normal">
-          © 2026 Update You News. All rights reserved.
+        <div className="text-[10px] uppercase tracking-[0.2em] text-[#555555] border-y border-[#111111] py-2 px-4 w-full max-w-xl">
+          HOME ✦ WORLD ✦ BUSINESS ✦ TRAVEL ✦ TECH ✦ FASHION ✦ LIFESTYLE
+        </div>
+
+        <div className="text-[11px] text-[#555555] font-bold uppercase">
+          © 2026 UPDATE YOU NEWS. ALL RIGHTS RESERVED.
         </div>
       </div>
     </footer>

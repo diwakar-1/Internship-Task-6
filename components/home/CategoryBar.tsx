@@ -3,7 +3,6 @@
 import React, { useRef } from "react";
 import posthog from "posthog-js";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Chip } from "../ui/Chip";
 
 const CATEGORIES = [
   "Weather & Climate",
@@ -14,7 +13,7 @@ const CATEGORIES = [
   "Artificial Intelligence",
   "Politics",
   "Technology",
-  "Extreme Weather and Disasters",
+  "Extreme Weather",
 ];
 
 interface CategoryBarProps {
@@ -49,15 +48,15 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
   };
 
   return (
-    <div className="w-full bg-[#F0F0F0] dark:bg-[#0F172A] border-b border-[#E5E7EB] dark:border-[#334155] py-2.5">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 flex items-center gap-2">
+    <div className="w-full bg-[#EBEAE5] border-b border-[#111111] py-2 font-mono">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center gap-2">
         {/* Left Arrow */}
         <button
           onClick={() => scroll("left")}
           aria-label="Scroll Left"
-          className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC] hover:bg-[#E5E7EB] dark:hover:bg-[#1E293B] rounded-full transition-colors flex-shrink-0 cursor-pointer"
+          className="p-1 border border-[#111111] hover:bg-[#111111] hover:text-white transition-colors flex-shrink-0 cursor-pointer bg-white/50"
         >
-          <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+          <ChevronLeft className="w-4 h-4" />
         </button>
 
         {/* Scrollable Chips List */}
@@ -66,26 +65,32 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
           className="flex-1 flex items-center gap-2 overflow-x-auto scrollbar-none py-1 scroll-smooth"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {CATEGORIES.map((cat) => (
-            <div key={cat} className="flex-shrink-0">
-              <Chip
-                label={cat}
-                active={currentCategory === cat}
+          {CATEGORIES.map((cat) => {
+            const isActive = currentCategory === cat;
+            return (
+              <button
+                key={cat}
                 onClick={() => handleSelectCategory(cat)}
-                size="sm"
-                showIcon={false}
-              />
-            </div>
-          ))}
+                className={`flex-shrink-0 px-3 py-1 text-[11px] font-bold uppercase tracking-wider border transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-[#111111] text-white border-[#111111]"
+                    : "bg-white/40 text-[#111111] border-[#111111] hover:bg-[#111111] hover:text-white"
+                }`}
+              >
+                <span>{cat}</span>
+                {isActive && <span className="ml-1 text-xs">✦</span>}
+              </button>
+            );
+          })}
         </div>
 
         {/* Right Arrow */}
         <button
           onClick={() => scroll("right")}
           aria-label="Scroll Right"
-          className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#0D0D0F] dark:hover:text-[#F8FAFC] hover:bg-[#E5E7EB] dark:hover:bg-[#1E293B] rounded-full transition-colors flex-shrink-0 cursor-pointer"
+          className="p-1 border border-[#111111] hover:bg-[#111111] hover:text-white transition-colors flex-shrink-0 cursor-pointer bg-white/50"
         >
-          <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>

@@ -1,4 +1,4 @@
--- Update Me Database Schema
+-- Update You Database Schema
 -- Core Tables: sources, articles, article_analyses, logs, oxylabs_schedules, oxylabs_schedule_runs
 
 -- 1. Sources Table
