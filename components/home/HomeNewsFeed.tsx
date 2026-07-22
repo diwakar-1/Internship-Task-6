@@ -39,6 +39,7 @@ export const HomeNewsFeed: React.FC<HomeNewsFeedProps> = ({ initialArticles }) =
   const [isScraping, setIsScraping] = useState<boolean>(false);
   const [scrapeMessage, setScrapeMessage] = useState<string | null>(null);
   const [heroSlideIndex, setHeroSlideIndex] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     setTimeout(() => {
@@ -78,6 +79,13 @@ export const HomeNewsFeed: React.FC<HomeNewsFeedProps> = ({ initialArticles }) =
     const titleLower = (article.title || "").toLowerCase().trim();
     const locLower = (selectedLocation || "").toLowerCase().trim();
     const rawTextLower = (article.raw_text || "").toLowerCase().trim();
+
+    // Search Query Filtering
+    if (searchQuery.trim().length > 0) {
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch = titleLower.includes(q) || sourceName.includes(q) || rawTextLower.includes(q);
+      if (!matchesSearch) return false;
+    }
 
     // 1. Tab / Region Filtering
     if (activeTab === "Local") {
@@ -293,6 +301,8 @@ export const HomeNewsFeed: React.FC<HomeNewsFeedProps> = ({ initialArticles }) =
           onTabChange={(tab) => setActiveTab(tab)}
           onLocationChange={(loc) => setSelectedLocation(loc)}
           onPreferencesChange={(topics) => setUserTopics(topics)}
+          searchQuery={searchQuery}
+          onSearchQueryChange={(q) => setSearchQuery(q)}
         />
 
         {/* Main Content Outer Container */}

@@ -12,6 +12,8 @@ interface HomeNavbarProps {
   onTabChange?: (tab: string) => void;
   onLocationChange?: (location: string) => void;
   onPreferencesChange?: (preferences: string[]) => void;
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
 }
 
 const NAV_ITEMS = [
@@ -96,12 +98,15 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
   onTabChange,
   onLocationChange,
   onPreferencesChange,
+  searchQuery = "",
+  onSearchQueryChange,
 }) => {
   const [mounted, setMounted] = useState<boolean>(false);
   const [activeTabState, setActiveTabState] = useState<string>("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
   const [showPreferencesModal, setShowPreferencesModal] = useState<boolean>(false);
+  const [showSearchModal, setShowSearchModal] = useState<boolean>(false);
   const [selectedLocation, setSelectedLocation] = useState<string>("United States");
   const [userPreferences, setUserPreferences] = useState<string[]>(["Technology", "Politics"]);
 
@@ -223,7 +228,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
 
             {/* Search Icon Cell */}
             <button
-              onClick={() => alert("Search functionality active: Filter stories by keywords in top section.")}
+              onClick={() => setShowSearchModal(true)}
               className="px-4 flex items-center border-l border-[#111111] hover:bg-[#111111] hover:text-white transition-colors cursor-pointer"
               aria-label="Search"
             >
@@ -352,6 +357,62 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
                   </button>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search Modal Overlay */}
+      {showSearchModal && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-xs pt-20 px-4 font-mono">
+          <div className="bg-[#EBEAE5] border-2 border-[#111111] max-w-xl w-full p-6 shadow-2xl space-y-4 relative">
+            <div className="flex items-center justify-between border-b border-[#111111] pb-3">
+              <div className="flex items-center gap-2">
+                <Search className="w-5 h-5 text-[#111111]" />
+                <h3 className="text-base font-extrabold uppercase font-syne text-[#111111]">SEARCH DISPATCHES</h3>
+              </div>
+              <button
+                onClick={() => setShowSearchModal(false)}
+                className="p-1 hover:bg-[#111111] hover:text-white transition-colors border border-[#111111] cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-[#555555]">Enter keywords, topic, or source name to search articles live:</p>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => {
+                    if (onSearchQueryChange) onSearchQueryChange(e.target.value);
+                  }}
+                  placeholder="SEARCH NEWS (E.G. WAR, ELECTION, CRICKET, AI)..."
+                  className="w-full bg-white border border-[#111111] p-3 text-xs uppercase text-[#111111] placeholder:text-[#888888] outline-none font-bold pr-10"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      if (onSearchQueryChange) onSearchQueryChange("");
+                    }}
+                    className="absolute right-3 text-xs font-bold text-[#111111] hover:underline"
+                  >
+                    CLEAR
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-between items-center border-t border-[#111111] text-[11px] font-bold text-[#555555]">
+              <span>{searchQuery ? `ACTIVE FILTER: "${searchQuery.toUpperCase()}"` : "NO SEARCH QUERY ENTERED"}</span>
+              <button
+                onClick={() => setShowSearchModal(false)}
+                className="bg-[#111111] text-white text-xs uppercase font-bold px-4 py-2 hover:bg-white hover:text-[#111111] border border-[#111111] transition-all cursor-pointer"
+              >
+                DONE ✦
+              </button>
             </div>
           </div>
         </div>
