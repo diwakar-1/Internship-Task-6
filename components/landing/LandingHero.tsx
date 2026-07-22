@@ -31,7 +31,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ previewArticles = [] }
         <div className="flex justify-center mb-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border-2 border-[#111111] shadow-[3px_3px_0px_0px_#111111] font-mono text-xs font-bold uppercase tracking-wider">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>AI-Powered News Transparency & Framing Intelligence</span>
+            <span>REAL-TIME NEWS TRANSPARENCY & FRAMING INTELLIGENCE</span>
           </div>
         </div>
 

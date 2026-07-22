@@ -1,5 +1,5 @@
 import React from "react";
-import { HomeNavbar } from "@/components/home/HomeNavbar";
+import { LandingHeader } from "@/components/landing/LandingHeader";
 import { HomeFooter } from "@/components/home/HomeFooter";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingFeatures } from "@/components/landing/LandingFeatures";
@@ -14,7 +14,7 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#EBEAE5] text-[#111111] flex flex-col justify-between selection:bg-[#111111] selection:text-white">
-      <HomeNavbar />
+      <LandingHeader />
       
       <main className="flex-1">
         <LandingHero previewArticles={articles} />

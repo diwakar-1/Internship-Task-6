@@ -11,11 +11,6 @@ export const LandingCTA: React.FC = () => {
         
         <div className="max-w-3xl mx-auto text-center space-y-8">
           
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#EBEAE5] text-[#111111] border border-white font-mono text-xs font-bold uppercase tracking-widest">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
-            <span>EXPERT-GRADE NEWS ANALYSIS ACCESSIBLE TO ALL</span>
-          </div>
-
           <h2 className="font-syne font-extrabold text-4xl sm:text-6xl uppercase tracking-tight leading-[0.95] text-white">
             READY TO READ NEWS WITH COMPLETE TRANSPARENCY?
           </h2>
@@ -32,21 +27,6 @@ export const LandingCTA: React.FC = () => {
                 <ArrowRight className="w-5 h-5" />
               </button>
             </Link>
-          </div>
-
-          <div className="pt-8 flex flex-wrap items-center justify-center gap-8 font-mono text-xs text-gray-400 uppercase font-bold border-t border-gray-800 max-w-xl mx-auto">
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-emerald-400" />
-              NO BIAS HIDDEN
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Newspaper className="w-4 h-4 text-blue-400" />
-              REAL-TIME SOURCES
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-yellow-400" />
-              AI POWERED
-            </span>
           </div>
 
         </div>
