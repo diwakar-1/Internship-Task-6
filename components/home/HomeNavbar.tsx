@@ -17,14 +17,14 @@ interface HomeNavbarProps {
 }
 
 const NAV_ITEMS = [
-  { id: "Home", label: "HOME" },
-  { id: "World", label: "WORLD" },
-  { id: "Business", label: "BUSINESS" },
-  { id: "Travel", label: "TRAVEL" },
-  { id: "Tech", label: "TECH" },
-  { id: "For You", label: "FOR YOU" },
-  { id: "Local", label: "LOCAL" },
-  { id: "Blindspot", label: "BLINDSPOT" },
+  { id: "About", label: "ABOUT", href: "/" },
+  { id: "Newsroom", label: "NEWSROOM", href: "/feed" },
+  { id: "World", label: "WORLD", href: "/feed" },
+  { id: "Business", label: "BUSINESS", href: "/feed" },
+  { id: "Travel", label: "TRAVEL", href: "/feed" },
+  { id: "Tech", label: "TECH", href: "/feed" },
+  { id: "For You", label: "FOR YOU", href: "/feed" },
+  { id: "Local", label: "LOCAL", href: "/feed" },
 ];
 
 const LOCATIONS = [
@@ -102,7 +102,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
   onSearchQueryChange,
 }) => {
   const [mounted, setMounted] = useState<boolean>(false);
-  const [activeTabState, setActiveTabState] = useState<string>("Home");
+  const [activeTabState, setActiveTabState] = useState<string>("About");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
   const [showPreferencesModal, setShowPreferencesModal] = useState<boolean>(false);
@@ -187,8 +187,9 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
             {NAV_ITEMS.map((item) => {
               const isActive = currentTab.toLowerCase() === item.id.toLowerCase();
               return (
-                <button
+                <Link
                   key={item.id}
+                  href={item.href}
                   onClick={() => selectTab(item.id)}
                   className={`px-4 sm:px-5 flex items-center justify-center font-mono text-xs font-bold tracking-wider uppercase border-r border-[#111111] transition-all cursor-pointer relative ${
                     isActive
@@ -200,13 +201,21 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
                   {isActive && (
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[5px] border-b-[#EBEAE5]" />
                   )}
-                </button>
+                </Link>
               );
             })}
           </nav>
 
-          {/* Right Action Cells: Search & Auth */}
+          {/* Right Action Cells: Search & Newsroom Access & Auth */}
           <div className="flex items-stretch ml-auto">
+            {/* Direct Newsroom Access Button */}
+            <Link
+              href="/feed"
+              className="hidden sm:flex items-center px-4 font-mono text-xs font-bold uppercase tracking-wider bg-[#111111] text-white hover:bg-[#333333] transition-colors border-l border-[#111111]"
+            >
+              NEWSROOM ➔
+            </Link>
+
             {/* Location indicator button */}
             <button
               onClick={() => setShowLocationModal(true)}
