@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { HomeNavbar } from "./HomeNavbar";
-import { CategoryBar } from "./CategoryBar";
 import { HomeNewsCard } from "./HomeNewsCard";
 import { HomeFooter } from "./HomeFooter";
 import { Article } from "@/lib/supabase/types";
@@ -288,17 +287,12 @@ export const HomeNewsFeed: React.FC<HomeNewsFeedProps> = ({ initialArticles }) =
   return (
     <div className="min-h-screen bg-[#EBEAE5] text-[#111111] font-sans flex flex-col justify-between selection:bg-[#111111] selection:text-white">
       <div>
-        {/* Top Header Navbar & Category Chips */}
+        {/* Top Header Navbar */}
         <HomeNavbar
           activeTab={activeTab}
           onTabChange={(tab) => setActiveTab(tab)}
           onLocationChange={(loc) => setSelectedLocation(loc)}
           onPreferencesChange={(topics) => setUserTopics(topics)}
-        />
-
-        <CategoryBar
-          activeCategory={activeCategory}
-          onSelectCategory={(cat) => setActiveCategory(cat)}
         />
 
         {/* Main Content Outer Container */}
