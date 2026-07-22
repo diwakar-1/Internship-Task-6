@@ -17,14 +17,14 @@ interface HomeNavbarProps {
 }
 
 const NAV_ITEMS = [
-  { id: "About", label: "ABOUT", href: "/" },
-  { id: "Newsroom", label: "NEWSROOM", href: "/feed" },
+  { id: "Home", label: "HOME", href: "/feed" },
   { id: "World", label: "WORLD", href: "/feed" },
   { id: "Business", label: "BUSINESS", href: "/feed" },
   { id: "Travel", label: "TRAVEL", href: "/feed" },
   { id: "Tech", label: "TECH", href: "/feed" },
   { id: "For You", label: "FOR YOU", href: "/feed" },
   { id: "Local", label: "LOCAL", href: "/feed" },
+  { id: "Blindspot", label: "BLINDSPOT", href: "/feed" },
 ];
 
 const LOCATIONS = [
@@ -102,7 +102,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
   onSearchQueryChange,
 }) => {
   const [mounted, setMounted] = useState<boolean>(false);
-  const [activeTabState, setActiveTabState] = useState<string>("About");
+  const [activeTabState, setActiveTabState] = useState<string>("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
   const [showPreferencesModal, setShowPreferencesModal] = useState<boolean>(false);
@@ -191,7 +191,7 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
                   key={item.id}
                   href={item.href}
                   onClick={() => selectTab(item.id)}
-                  className={`px-4 sm:px-5 flex items-center justify-center font-mono text-xs font-bold tracking-wider uppercase border-r border-[#111111] transition-all cursor-pointer relative ${
+                  className={`px-3 lg:px-4 flex items-center justify-center font-mono text-xs font-bold tracking-wider uppercase border-r border-[#111111] transition-all cursor-pointer relative shrink-0 ${
                     isActive
                       ? "bg-[#111111] text-[#EBEAE5]"
                       : "text-[#111111] hover:bg-[#DCDAD4]"
@@ -206,16 +206,8 @@ export const HomeNavbar: React.FC<HomeNavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Action Cells: Search & Newsroom Access & Auth */}
-          <div className="flex items-stretch ml-auto">
-            {/* Direct Newsroom Access Button */}
-            <Link
-              href="/feed"
-              className="hidden sm:flex items-center px-4 font-mono text-xs font-bold uppercase tracking-wider bg-[#111111] text-white hover:bg-[#333333] transition-colors border-l border-[#111111]"
-            >
-              NEWSROOM ➔
-            </Link>
-
+          {/* Right Action Cells: Search & Auth */}
+          <div className="flex items-stretch ml-auto shrink-0">
             {/* Location indicator button */}
             <button
               onClick={() => setShowLocationModal(true)}

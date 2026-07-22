@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import posthog from "posthog-js";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 
 const CATEGORIES = [
   "Weather & Climate",
@@ -78,7 +78,7 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
                 }`}
               >
                 <span>{cat}</span>
-                {isActive && <span className="ml-1 text-xs">✦</span>}
+                {isActive && <Sparkles className="w-3 h-3 ml-1 inline text-emerald-400" />}
               </button>
             );
           })}

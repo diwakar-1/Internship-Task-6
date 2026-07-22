@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Scale, MessageSquare, AlertCircle, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { Scale, MessageSquare, AlertCircle, ArrowUpRight, CheckCircle2, Sparkles } from "lucide-react";
 
 export const LandingPreview: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"summary" | "framing" | "terms">("framing");
@@ -23,8 +23,10 @@ export const LandingPreview: React.FC = () => {
                 SAMPLE ARTICLE ANALYSIS BREAKDOWN
               </span>
             </div>
-            <div className="text-gray-400 text-[11px] font-bold">
-              MODEL: OPENAI GPT-4O-MINI ✦ CONFIDENCE: 94%
+            <div className="text-gray-400 text-[11px] font-bold flex items-center gap-1.5">
+              <span>MODEL: OPENAI GPT-4O-MINI</span>
+              <Sparkles className="w-3 h-3 text-emerald-400" />
+              <span>CONFIDENCE: 94%</span>
             </div>
           </div>
 
@@ -145,8 +147,9 @@ export const LandingPreview: React.FC = () => {
                       <span className="px-2 py-1 bg-white border border-[#111111] font-bold">"regulatory momentum"</span>
                       <span className="px-2 py-1 bg-white border border-[#111111] font-bold">"grid modernization"</span>
                     </div>
-                    <p className="font-mono text-[11px] text-[#666666] pt-2">
-                      ✦ Terms reflect technical industry nomenclature rather than emotional rhetoric.
+                    <p className="font-mono text-[11px] text-[#666666] pt-2 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-[#666666] shrink-0" />
+                      <span>Terms reflect technical industry nomenclature rather than emotional rhetoric.</span>
                     </p>
                   </div>
                 )}
@@ -154,7 +157,7 @@ export const LandingPreview: React.FC = () => {
 
               {/* Action Button to Open Newsroom */}
               <div className="pt-4 border-t border-[#111111] flex justify-end font-mono">
-                <Link href="/feed">
+                <Link href="/feed" target="_blank" rel="noopener noreferrer">
                   <button className="px-5 py-2.5 bg-[#111111] text-white font-bold text-xs uppercase tracking-wider border border-[#111111] shadow-[3px_3px_0px_0px_#888888] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#888888] transition-all flex items-center gap-2 cursor-pointer">
                     <span>SEE LIVE ARTICLES IN NEWSROOM</span>
                     <ArrowUpRight className="w-4 h-4" />

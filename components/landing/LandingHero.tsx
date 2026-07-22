@@ -47,7 +47,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ previewArticles = [] }
 
           {/* Call To Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 font-mono">
-            <Link href="/feed" className="w-full sm:w-auto">
+            <Link href="/feed" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
               <button className="w-full sm:w-auto px-8 py-4 bg-[#111111] text-white font-bold text-sm uppercase tracking-widest border-2 border-[#111111] shadow-[5px_5px_0px_0px_#888888] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0px_0px_#888888] transition-all flex items-center justify-center gap-3 cursor-pointer">
                 <span>EXPLORE LIVE NEWSROOM</span>
                 <ArrowRight className="w-4 h-4" />
@@ -106,7 +106,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ previewArticles = [] }
                   <span className="border border-[#111111] px-1.5 py-0.5 text-[10px] font-bold bg-[#EBEAE5]">
                     {(item as any).analysis?.sentiment_label?.toUpperCase() || (item as any).sentiment || "ANALYZED"}
                   </span>
-                  <span className="text-[#888888]">✦</span>
+                  <Sparkles className="w-3 h-3 text-[#888888]" />
                 </div>
               ))}
             </div>

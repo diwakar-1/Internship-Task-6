@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Cpu, Scale, Search, Layers, RefreshCw, BarChart3, Database, Eye } from "lucide-react";
+import { Cpu, Scale, Search, Layers, RefreshCw, BarChart3, Database, Eye, Sparkles } from "lucide-react";
 
 export const LandingFeatures: React.FC = () => {
   const features = [
@@ -97,7 +97,7 @@ export const LandingFeatures: React.FC = () => {
 
                 {/* Highlight Footer */}
                 <div className="pt-3 border-t border-dashed border-[#cccccc] font-mono text-[11px] font-bold text-[#111111] uppercase flex items-center gap-1.5 bg-[#EBEAE5]/50 p-2">
-                  <span className="text-emerald-600">✦</span>
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>{item.highlight}</span>
                 </div>
               </div>

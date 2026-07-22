@@ -26,7 +26,7 @@ export const LandingCTA: React.FC = () => {
 
           {/* Big CTA Button */}
           <div className="pt-4 font-mono flex justify-center">
-            <Link href="/feed">
+            <Link href="/feed" target="_blank" rel="noopener noreferrer">
               <button className="px-10 py-5 bg-white text-[#111111] font-extrabold text-base uppercase tracking-widest border-2 border-white shadow-[6px_6px_0px_0px_#444444] hover:bg-[#EBEAE5] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#444444] transition-all flex items-center gap-3 cursor-pointer">
                 <span>ENTER LIVE NEWSROOM NOW</span>
                 <ArrowRight className="w-5 h-5" />
